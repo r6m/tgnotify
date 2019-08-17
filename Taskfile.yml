@@ -1,0 +1,32 @@
+# https://taskfile.dev
+
+version: "2"
+
+tasks:
+  proto:
+    cmds:
+      - protoc -I/usr/local/include -I. -I$GOPATH/src -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --go_out=plugins=grpc:. proto/api.proto
+    silent: true
+
+  deps:
+    cmds:
+      - go run main.go
+
+  build:
+    cmds:
+      - GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w" -o bin/app
+  upx:
+    cmds:
+      - upx bin/*
+
+  clean:
+    cmds:
+      - rm bin/*
+
+  docker:
+    cmds:
+      - task: clean
+      - task: build
+      - task: upx
+      - docker build -t rezam/tgnotify:latest .
+      - docker push rezam/tgnotify:latest

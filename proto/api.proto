@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package proto;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service TgNotify {
+  rpc SendMessage(SendMessageRequest) returns (google.protobuf.Empty);
+}
+
+message SendMessageRequest {
+  string bot_token = 1;
+  string chat_id = 2;
+  string text = 3;
+}
